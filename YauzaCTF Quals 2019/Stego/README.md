@@ -184,6 +184,11 @@ Brainloller можете проверить сами.
 **Флаг:** `YAUZACTF{1n_5p3c_w3_7ru57}`
 
 
+# She
+
+За этим райтапом можно обратиться по этой [ссылке](https://github.com/loqpa/CTF/tree/master/Yauza19/She). 
+
+
 
 
 
