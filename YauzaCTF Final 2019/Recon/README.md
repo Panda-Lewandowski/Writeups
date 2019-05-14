@@ -39,7 +39,7 @@ Allow: /
 
 ![task](./src/index.png)
 
-Архив `index.zip` запаролен.
+Архив `inbox.zip` запаролен.
 
 Брутим JohnTheRipper'ом.
 
