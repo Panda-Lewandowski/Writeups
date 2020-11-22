@@ -22,7 +22,7 @@ $ python2 bmc-tools.py -s cache -d ./output -b
 ```
 
 
-Получем 246 склееных кусочков картинки. Склеить их довольно трудно из-за специфики передачи изображения в RDP. Примерное изображение:
+Получем 246 кусочков картинки. Склеить их довольно трудно из-за специфики передачи изображения в RDP. Примерное изображение:
 
 ![collage](./src/RDP_collage.png)
 
@@ -55,7 +55,7 @@ INFO    : volatility.debug    : Determining profile based on KDBG search...
 ```
 
 ```
-$ vol.py -f truemaster/memory.vmem --profile=WinXPSP2x86 pstree                                         [21:46:57]
+$ vol.py -f truemaster/memory.vmem --profile=WinXPSP2x86 pstree                                         
 Volatility Foundation Volatility Framework 2.6.1
 Name                                                  Pid   PPid   Thds   Hnds Time
 -------------------------------------------------- ------ ------ ------ ------ ----
@@ -147,7 +147,7 @@ Session    WindowStation Format                 Handle Object     Data
 
 Данные из буфера обмена: `mNXsw57eIIJbEZbYqR8Qt0kG24giNrUceY3gOXIgbj4aS81I/SY+7kGuDnUOiOAXLUsvACVL+QaxXg==`.
 
-Попробуем примонтировать `music` с помощью master key чере утилиту [MKDecrypt](https://github.com/AmNe5iA/MKDecrypt).
+Попробуем примонтировать `music` с помощью master key через утилиту [MKDecrypt](https://github.com/AmNe5iA/MKDecrypt).
 
 ```
 $ python MKDecrypt.py truemaster/music -m /mnt/ -X 0x81bfe1a8_master.key
@@ -165,7 +165,121 @@ $ python MKDecrypt.py truemaster/music -m /mnt/ -X 0x81bfe1a8_master.key
 
 ![task](./src/Excel.png)
 
- pstree -> handlers excel -> dump book.xlsm -> VBA Stomping 
+Стандартно пройдемся по образу с volatility.
+
+```
+$ vol.py -f excel.vmem imageinfo                                 
+Volatility Foundation Volatility Framework 2.6.1
+INFO    : volatility.debug    : Determining profile based on KDBG search...
+
+          Suggested Profile(s) : Win7SP1x64, Win7SP0x64, Win2008R2SP0x64, Win2008R2SP1x64_24000, Win2008R2SP1x64_23418, Win2008R2SP1x64, Win7SP1x64_24000, Win7SP1x64_23418
+                     AS Layer1 : WindowsAMD64PagedMemory (Kernel AS)
+                     AS Layer2 : FileAddressSpace (/Users/pandas/Desktop/Кубок/excel.vmem)
+                      PAE type : No PAE
+                           DTB : 0x187000L
+                          KDBG : 0xf80002c550a0L
+          Number of Processors : 1
+     Image Type (Service Pack) : 1
+                KPCR for CPU 0 : 0xfffff80002c56d00L
+             KUSER_SHARED_DATA : 0xfffff78000000000L
+           Image date and time : 2020-11-01 20:56:13 UTC+0000
+     Image local date and time : 2020-11-01 23:56:13 +0300
+```
+
+```
+$ vol.py -f excel.vmem --profile=Win7SP1x64 pstree               
+Volatility Foundation Volatility Framework 2.6.1
+Name                                                  Pid   PPid   Thds   Hnds Time
+-------------------------------------------------- ------ ------ ------ ------ ----
+ 0xfffffa80038b2060:wininit.exe                       400    340      8     89 2020-11-01 20:55:36 UTC+0000
+. 0xfffffa8003b7c410:lsass.exe                        512    400      9    538 2020-11-01 20:55:36 UTC+0000
+. 0xfffffa8003b42700:lsm.exe                          520    400     10    160 2020-11-01 20:55:36 UTC+0000
+. 0xfffffa8002e0d530:services.exe                     504    400     17    243 2020-11-01 20:55:36 UTC+0000
+.. 0xfffffa8003ec15f0:dllhost.exe                    1964    504     18    205 2020-11-01 20:55:39 UTC+0000
+.. 0xfffffa80039c2b30:svchost.exe                     984    504     19    394 2020-11-01 20:55:38 UTC+0000
+.. 0xfffffa8003b5d060:taskhost.exe                   1304    504      9    155 2020-11-01 20:55:38 UTC+0000
+.. 0xfffffa8003dd49d0:svchost.exe                     772    504     21    435 2020-11-01 20:55:37 UTC+0000
+.. 0xfffffa80036e9540:svchost.exe                     932    504     45    808 2020-11-01 20:55:38 UTC+0000
+.. 0xfffffa8003d52060:msdtc.exe                      1192    504     15    157 2020-11-01 20:55:40 UTC+0000
+.. 0xfffffa8003b75b30:svchost.exe                    1324    504     24    328 2020-11-01 20:55:38 UTC+0000
+.. 0xfffffa8003cd7060:vmtoolsd.exe                   1584    504     10    192 2020-11-01 20:55:39 UTC+0000
+.. 0xfffffa8003d692d0:vm3dservice.ex                  696    504      4     46 2020-11-01 20:55:37 UTC+0000
+.. 0xfffffa8003b2e9e0:spoolsv.exe                    1272    504     15    285 2020-11-01 20:55:38 UTC+0000
+.. 0xfffffa8003d74b30:svchost.exe                     720    504     11    306 2020-11-01 20:55:37 UTC+0000
+.. 0xfffffa8003e8eb30:dllhost.exe                    1892    504     20    190 2020-11-01 20:55:39 UTC+0000
+.. 0xfffffa8002eb55c0:svchost.exe                     860    504     21    406 2020-11-01 20:55:37 UTC+0000
+... 0xfffffa8003a2da10:dwm.exe                       1096    860      5     72 2020-11-01 20:55:38 UTC+0000
+.. 0xfffffa80040e2060:OSPPSVC.EXE                    2256    504      5    132 2020-11-01 20:56:02 UTC+0000
+.. 0xfffffa8003da5b30:VGAuthService.                 1552    504      4     84 2020-11-01 20:55:39 UTC+0000
+.. 0xfffffa800395cb30:svchost.exe                     356    504     35    758 2020-11-01 20:55:38 UTC+0000
+.. 0xfffffa80039b4250:SearchIndexer.                  968    504     13    694 2020-11-01 20:55:44 UTC+0000
+... 0xfffffa8002fa8060:SearchProtocol                2792    968      8    278 2020-11-01 20:55:56 UTC+0000
+... 0xfffffa8003f6eb30:SearchProtocol                2116    968      7    229 2020-11-01 20:55:44 UTC+0000
+... 0xfffffa8003fb2630:SearchFilterHo                2136    968      5     85 2020-11-01 20:55:44 UTC+0000
+.. 0xfffffa8002eb6b30:svchost.exe                    2216    504     30    335 2020-11-01 20:55:46 UTC+0000
+.. 0xfffffa8004098240:WmiApSrv.exe                   3000    504      7    120 2020-11-01 20:56:00 UTC+0000
+.. 0xfffffa8003d1a3e0:svchost.exe                     632    504     15    367 2020-11-01 20:55:37 UTC+0000
+... 0xfffffa8003e81630:WmiPrvSE.exe                  1940    632      9    144 2020-11-01 20:55:39 UTC+0000
+... 0xfffffa8003f85b30:WmiPrvSE.exe                  2892    632     13    315 2020-11-01 20:55:59 UTC+0000
+.. 0xfffffa8002ef0b30:VSSVC.exe                      1956    504      6    121 2020-11-01 20:55:40 UTC+0000
+.. 0xfffffa8004009b30:wmpnetwk.exe                   2344    504     14    226 2020-11-01 20:55:46 UTC+0000
+ 0xfffffa800371ab30:csrss.exe                         348    340      8    550 2020-11-01 20:55:35 UTC+0000
+ 0xfffffa80018ad840:System                              4      0     88    481 2020-11-01 20:55:35 UTC+0000
+. 0xfffffa800c3f4620:smss.exe                         268      4      4     29 2020-11-01 20:55:35 UTC+0000
+ 0xfffffa80038a35f0:csrss.exe                         412    392      9    228 2020-11-01 20:55:36 UTC+0000
+ 0xfffffa8003a02870:winlogon.exe                      460    392      6    119 2020-11-01 20:55:36 UTC+0000
+ 0xfffffa8003a46b30:explorer.exe                     1112   1084     44    921 2020-11-01 20:55:38 UTC+0000
+. 0xfffffa8003aea8e0:vm3dservice.ex                  1216   1112      5     50 2020-11-01 20:55:38 UTC+0000
+. 0xfffffa8003a8a500:vmtoolsd.exe                    1224   1112      9    150 2020-11-01 20:55:38 UTC+0000
+. 0xfffffa80040b76c0:EXCEL.EXE                       3052   1112     17    423 2020-11-01 20:56:01 UTC+0000
+```
+
+Комбинируем информацию из описания таска и вывода `pstree`: скорее всего малварь находится в макросах Excel.
+Посмотрим в нем открытые файлы: 
+
+```
+$ vol.py -f excel.vmem --profile=Win7SP1x64 handles -p 3052 -t File  
+Volatility Foundation Volatility Framework 2.6.1
+Offset(V)             Pid             Handle             Access Type             Details
+------------------ ------ ------------------ ------------------ ---------------- -------
+0xfffffa8004073410   3052               0x10           0x100020 File             \Device\HarddiskVolume1\Windows\winsxs\amd64_microsoft.windows.gdiplus_6595b64144ccf1df_1.1.7601.17514_none_2b24536c71ed437a
+0xfffffa8002faa330   3052              0x18c           0x100020 File             \Device\HarddiskVolume1\Windows\winsxs\amd64_microsoft.windows.common-controls_6595b64144ccf1df_6.0.7601.17514_none_fa396087175ac9ac
+0xfffffa80040d38c0   3052              0x1a4           0x100020 File             \Device\HarddiskVolume1\Windows\winsxs\amd64_microsoft.windows.common-controls_6595b64144ccf1df_6.0.7601.17514_none_fa396087175ac9ac
+0xfffffa80040d17b0   3052              0x1b8           0x100001 File             \Device\KsecDD
+0xfffffa80040b81e0   3052              0x2b4           0x120089 File             \Device\HarddiskVolume1\Windows\Registration\R000000000006.clb
+0xfffffa800410fcf0   3052              0x3a4           0x100020 File             \Device\HarddiskVolume1\Windows\winsxs\amd64_microsoft.windows.common-controls_6595b64144ccf1df_6.0.7601.17514_none_fa396087175ac9ac
+0xfffffa800410f470   3052              0x3a8           0x120089 File             \Device\HarddiskVolume1\Windows\Fonts\StaticCache.dat
+0xfffffa80040df720   3052              0x3f8           0x100020 File             \Device\HarddiskVolume1\Users\user\Documents
+0xfffffa800411f680   3052              0x410           0x100020 File             \Device\HarddiskVolume1\Windows\winsxs\amd64_microsoft.windows.common-controls_6595b64144ccf1df_6.0.7601.17514_none_fa396087175ac9ac
+0xfffffa80040e6520   3052              0x4d8           0x12019f File             \Device\HarddiskVolume1\Users\user\Desktop\book.xlsm
+0xfffffa80040e6070   3052              0x4dc           0x13019f File             \Device\HarddiskVolume1\Users\user\Desktop\~$book.xlsm
+0xfffffa80040e6240   3052              0x4fc           0x120089 File             \Device\HarddiskVolume1\Windows\System32\en-US\KernelBase.dll.mui
+0xfffffa8004129e00   3052              0x578           0x100020 File             \Device\HarddiskVolume1\Windows\winsxs\amd64_microsoft.windows.common-controls_6595b64144ccf1df_6.0.7601.17514_none_fa396087175ac9ac
+0xfffffa80042b7f20   3052              0x59c           0x12019f File             \Device\NamedPipe\srvsvc
+```
+
+Сдампим `book.xlsm`:
+
+```
+$ vol.py -f excel.vmem --profile=Win7SP1x64 dumpfiles -p 3052 --dump-dir=./extract/excel -n -r ".xlsm"                                                                                               
+Volatility Foundation Volatility Framework 2.6.1
+DataSectionObject 0xfffffa80040e6520   3052   \Device\HarddiskVolume1\Users\user\Desktop\book.xlsm
+SharedCacheMap 0xfffffa80040e6520   3052   \Device\HarddiskVolume1\Users\user\Desktop\book.xlsm
+DataSectionObject 0xfffffa80040e6070   3052   \Device\HarddiskVolume1\Users\user\Desktop\~$book.xlsm
+```
+
+Если открыть этот документ, то никаких макросов в нем не будет. Это навевает мысль о [VBA Stomping](https://medium.com/walmartglobaltech/vba-stomping-advanced-maldoc-techniques-612c484ab278). 
+
+Извлечем код скрипта: 
+
+```
+$ python pcodedmp -o ./vba.txt ./extract/excel/file.3052.0xfffffa800407c360.book.xlsm.dat
+```
+
+Полный вывод команды можно посмотреть [тут](./src/vba.txt). 
+
+Если присмотреться, то буквы в скрипте составляют флаг. 
+
 
 **Флаг:** `ctfcup{NOT_ALL_FUNCTIONS_OF_THE_OFFICE_SUITE_SHOULD_BE_USED_IN_A_CORPORATE_ENVIRONMENT_JUST_TRUST_ME_FRIEND}`
 
