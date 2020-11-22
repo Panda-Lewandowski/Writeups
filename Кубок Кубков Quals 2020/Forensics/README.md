@@ -171,6 +171,10 @@ $ python MKDecrypt.py truemaster/music -m /mnt/ -X 0x81bfe1a8_master.key
 
 ## NPR 
 
+> NSA, PDF, RSA... Как это все может быть связано?
+
+[task](./src/task.pdf.zip)
+
 Загружаем PDF-файл в peepdf.
 
 ```
