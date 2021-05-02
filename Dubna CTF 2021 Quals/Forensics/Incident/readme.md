@@ -148,7 +148,7 @@ Dumped 64 bytes to ./0xfffffa8000e081a8_master.key
 sudo python MKDecrypt.py -m /mnt/ 734px-Dys7sO8WwAIsL9V.jpg -X 0xfffffa8000e081a8_master.key
 ```
 
-В примонтированном томк нас ждем один текстовый файлик в флагом. 
+В примонтированном томе нас ждет один текстовый файлик с флагом. 
 
 ## Флаг 
 

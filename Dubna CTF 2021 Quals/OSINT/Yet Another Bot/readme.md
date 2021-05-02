@@ -37,7 +37,7 @@
 - токен нового бота `1648913260:AAH9HkGOKozj6FxMPdJucc0uYkpQJEpem8I`
 - токен старого бота `1370389029:AAFIaYXbnHLCkNYIb5azZ2iOg5BWoRdOUC8`
 
-Теперь мы можем узнать username старого бота при помощи простейшего бота в Telegram API (на всякий случай исользуем tor):
+Теперь мы можем узнать username старого бота при помощи простейшего бота в Telegram API (на всякий случай используем tor):
 
 ```
 torify curl https://api.telegram.org/bot1370389029:AAFIaYXbnHLCkNYIb5azZ2iOg5BWoRdOUC8/getMe 

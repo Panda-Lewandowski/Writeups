@@ -22,7 +22,7 @@ DECIMAL       HEXADECIMAL     DESCRIPTION
 У нас уже есть нечто интересное. Файл tiff оказался склеен с gif, помещенным в архив. 
 Это некая каламбурная версия [RarJpeg](https://lurkmore.to/Rarjpeg) (Вообще, можно склеивать все со всем).
 Все вытащенные файлы `binwalk` поместил в папку [_neo.tiff.extracted](./_neo.tiff.extracted). 
-Там находим наш GIF файл: 2020
+Там находим наш GIF файл: 
 
 ![neo_gif](./_neo.tiff.extracted/NvL-2.gif)
 
